@@ -12,13 +12,13 @@ d3.json(queryUrl).then(function (data) {
   function chooseColor(depth) {
     if (depth <= 10) 
     return "#FFFE9A";
-    else if (depth <=25) 
+    else if (depth <=30) 
     return "#F3A333";
     else if (depth <=50)
     return "#F16821";
-    else if (depth <=75)
+    else if (depth <=70)
     return "#C70D3A";
-    else if (depth <=100)
+    else if (depth <=90)
     return "#9D0B0B";
     else return "#000";
   }
@@ -49,7 +49,7 @@ function createFeatures(earthquakeData) {
       // Define a function that we want to run once for each feature in the features array.
   // Give each feature a popup that describes the place and time of the earthquake.
   function onEachFeature(feature, layer) {
-    layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>depth:${feature.geometry.coordinates[2]}<br>magnitude:${feature.properties.mag}</p>`);
+    layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>depth:${feature.geometry.coordinates[2]}<br>latitude:${feature.geometry.coordinates[1]}<br>longitude:${feature.geometry.coordinates[0]}<br>magnitude:${feature.properties.mag}</p>`);
   }
 
   // Create a GeoJSON layer that contains the features array on the earthquakeData object.
@@ -83,9 +83,7 @@ function createFeatures(earthquakeData) {
   
     // Create our map, giving it the streetmap and earthquakes layers to display on load.
     let myMap = L.map("map", {
-      center: [
-        0, -0
-      ],
+      center: [0, 105],
       zoom: 2.5,
       layers: [street, earthquakes]
     });
@@ -94,7 +92,7 @@ function createFeatures(earthquakeData) {
     var legend = L.control({ position: "bottomright" });
     legend.onAdd = function(map) {
       var div = L.DomUtil.create("div", "info legend");
-        limits = [10, 25, 50, 75, 100];
+        limits = [10, 30, 50, 70, 90];
         labels = [];
     
         for (var i = 0; i < limits.length; i++) {
