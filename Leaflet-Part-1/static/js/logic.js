@@ -23,9 +23,10 @@ d3.json(queryUrl).then(function (data) {
     else return "#000";
   }
 
+  // start the marker creation function
   function createMarkers(feature, latlng) {
 
-// Set marker options based on the magnitude
+    // Set marker options based on the magnitude
     let magnitude = feature.properties.mag;
     let markerOptions = {
       radius: magnitude * 4,
@@ -36,32 +37,29 @@ d3.json(queryUrl).then(function (data) {
       fillOpacity: 1
     };
   
-    // Create the marker and bind a popup with the location, depth & magnitude
-// how to i combine this with the layer function in oneachfeature?
+    // Create the marker
     let marker = L.circleMarker(latlng, markerOptions);
-    marker.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>depth:${feature.geometry.coordinates[2]}magnitude:${magnitude}</p>`);
-  
     return marker;
   }
 
+ // start the earthquake data function
 function createFeatures(earthquakeData) {
 
-      // Define a function that we want to run once for each feature in the features array.
-  // Give each feature a popup that describes the place and time of the earthquake.
+  // Give each feature a popup that describes the place, location, depth and magnitude of the earthquake
   function onEachFeature(feature, layer) {
-    layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>depth:${feature.geometry.coordinates[2]}<br>latitude:${feature.geometry.coordinates[1]}<br>longitude:${feature.geometry.coordinates[0]}<br>magnitude:${feature.properties.mag}</p>`);
+    layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>Latitude:${feature.geometry.coordinates[1]}<br>Longitude:${feature.geometry.coordinates[0]}<br>Depth:${feature.geometry.coordinates[2]}<br>Magnitude:${feature.properties.mag}</p>`);
   }
 
-  // Create a GeoJSON layer that contains the features array on the earthquakeData object.
+  // Create a GeoJSON layer that contains the features array on the earthquakeData.
   // Run the onEachFeature function once for each piece of data in the array.
   let earthquakes = L.geoJSON(earthquakeData, {
     onEachFeature: onEachFeature,
     pointToLayer: createMarkers
   });
 
-  // Send our earthquakes layer to the createMap function/
+  // Send our earthquakes layer to the createMap function.
   createMap(earthquakes);
-}
+  }
 
     function createMap(earthquakes) {
 
@@ -70,10 +68,14 @@ function createFeatures(earthquakeData) {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     })
 
-  
+    let topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+    });
+
     // Create a baseMaps object.
     let baseMaps = {
-      "Street Map": street
+      "Street Map": street,
+      "Topographic Map": topo
     };
   
     // Create an overlay object to hold our overlay.
@@ -88,7 +90,7 @@ function createFeatures(earthquakeData) {
       layers: [street, earthquakes]
     });
 
-      // Set up the legend.
+    // Set up the legend.
     var legend = L.control({ position: "bottomright" });
     legend.onAdd = function(map) {
       var div = L.DomUtil.create("div", "info legend");
@@ -106,9 +108,7 @@ function createFeatures(earthquakeData) {
   // Adding the legend to the map
   legend.addTo(myMap);
 
-      // Create a layer control.
-    // Pass it our baseMaps and overlayMaps.
-    // Add the layer control to the map.
+    // Create a layer control.
     L.control.layers(baseMaps, overlayMaps, {
         collapsed: false
       }).addTo(myMap);
