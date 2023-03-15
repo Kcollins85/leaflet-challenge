@@ -94,7 +94,7 @@ function createFeatures(earthquakeData) {
     var legend = L.control({ position: "bottomright" });
     legend.onAdd = function(map) {
       var div = L.DomUtil.create("div", "info legend");
-        limits = [10, 30, 50, 70, 90];
+        limits = [-10, 10, 30, 50, 70, 90];
         labels = [];
     
         for (var i = 0; i < limits.length; i++) {
